@@ -74,6 +74,57 @@ PORT=8080
 ENVIRONMENT=development
 ```
 
+## 🤖 CHATBOT FEATURE IMPLEMENTATION PLAN
+
+### Current Status: CORE PIPELINE COMPLETE ✅
+All 9 pipeline steps have been implemented and tested:
+1. ✅ File Upload/Validation
+2. ✅ Text Extraction (PDF/EPUB/DOCX/HTML/TXT)
+3. ✅ Smart Chunking (sentence-aware with overlap)
+4. ✅ Token Counting (real tiktoken)
+5. ✅ Embedding Creation (real OpenAI)
+6. ✅ Database Storage (PostgreSQL + pgvector)
+7. ✅ QA Search (vector + full-text + fusion)
+8. ✅ Claude Answer Extraction
+9. ✅ Ranked Results (confidence-based)
+
+### Next Phase: CHATBOT IMPLEMENTATION
+
+#### Phase 1: MVP Chatbot (1-2 Days)
+- [ ] Add chat conversation tables to database
+- [ ] Create chat API endpoints (/api/chat/*)
+- [ ] Wrap existing QASearch in conversational context
+- [ ] Build basic chat UI interface
+- [ ] Test end-to-end chat flow
+
+#### Phase 2: Enhanced Chat (3-4 Days)
+- [ ] Implement conversation context memory
+- [ ] Add document management to chat sessions
+- [ ] Show source attribution in responses
+- [ ] Improve chat UI with document references
+- [ ] Add conversation history browsing
+
+#### Phase 3: Advanced Features (5-7 Days)
+- [ ] Real-time WebSocket chat streaming
+- [ ] Smart follow-up question generation
+- [ ] Export conversation functionality
+- [ ] Multi-document reasoning
+- [ ] Conversation search and filtering
+
+#### Phase 4: Production Polish (3-5 Days)
+- [ ] Performance optimization for concurrent chats
+- [ ] Add conversation analytics and metrics
+- [ ] Implement chat rate limiting
+- [ ] Add conversation sharing features
+- [ ] Complete testing and documentation
+
+### Architecture Overview
+```
+User Message → Chat API → [Context + User Docs] → Existing QA Pipeline → Chat Response
+```
+
+The chatbot leverages the existing QA engine (Steps 7-9) with conversational wrapper.
+
 ## Project Structure
 
 ```
@@ -87,7 +138,7 @@ backend/
 │   ├── database/         # Database operations
 │   ├── middleware/       # HTTP middleware
 │   ├── models/           # Data models
-│   ├── services/         # Business logic
+│   ├── services/         # Business logic (QA Pipeline ✅)
 │   └── websocket/        # WebSocket handlers
 ├── migrations/           # SQL migration files
 ├── pkg/                  # Public packages
@@ -125,6 +176,21 @@ backend/
 ### Search
 - `GET /api/v1/search` - Search conversations and files
 - `POST /api/v1/search/semantic` - Semantic vector search
+
+### 🤖 Chat (New - Planned)
+- `POST /api/chat/conversations` - Start new chat conversation
+- `GET /api/chat/conversations` - List user's chat conversations
+- `GET /api/chat/conversations/:id` - Get conversation details
+- `POST /api/chat/conversations/:id/message` - Send message to chat
+- `GET /api/chat/conversations/:id/messages` - Get chat message history
+- `POST /api/chat/conversations/:id/documents` - Add documents to chat context
+- `DELETE /api/chat/conversations/:id/documents/:docId` - Remove document from chat
+- `WS /api/chat/conversations/:id/stream` - Real-time chat WebSocket
+
+### 📄 Document Upload (Enhanced)
+- `POST /api/documents/upload` - Upload documents for chat (PDF/EPUB/DOCX/TXT)
+- `GET /api/documents` - List user's uploaded documents
+- `DELETE /api/documents/:id` - Delete uploaded document
 
 ## Database Schema
 

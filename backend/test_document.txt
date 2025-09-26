@@ -1,0 +1,54 @@
+# Test Document for Pipeline Visualization
+
+This is a comprehensive test document designed to validate the complete text processing pipeline of the Self knowledge management system.
+
+## Introduction
+
+The Self system is designed to be your personal digital memory assistant. It processes various document formats including PDF, EPUB, DOCX, HTML, and plain text files like this one.
+
+## Key Features
+
+1. **Multi-format Support**: The system can extract text from multiple file formats using specialized libraries.
+
+2. **Smart Chunking**: Documents are intelligently divided into chunks that respect sentence boundaries and maintain context through overlapping segments.
+
+3. **Advanced Tokenization**: Uses OpenAI-compatible tiktoken library for precise token counting and text processing.
+
+4. **Semantic Search**: Creates vector embeddings for each chunk enabling semantic similarity search across all your content.
+
+5. **Answer Extraction**: Uses Claude AI to extract specific answers from retrieved chunks, solving the multi-modal relevance problem.
+
+## Technical Implementation
+
+The pipeline consists of several stages:
+- File validation and reading
+- Text extraction using format-specific parsers
+- Smart sentence-based chunking with overlap
+- Accurate token counting using tiktoken
+- Vector embedding generation
+- Database storage with full attribution
+
+## Testing Scenarios
+
+This document should be processed through the following steps:
+1. File reading and validation
+2. Plain text extraction (trivial for .txt files)
+3. Chunking into approximately 400-token segments
+4. Token counting for each chunk
+5. Embedding generation for semantic search
+6. Database storage with metadata
+
+## Expected Results
+
+When processed, this document should:
+- Generate approximately 3-4 chunks due to its length
+- Each chunk should have accurate token counts
+- Text should be cleanly extracted without formatting artifacts
+- Embeddings should enable semantic queries like "What are the key features?"
+- The system should provide detailed logging of each processing step
+
+## Conclusion
+
+This test document validates the complete text processing pipeline from file upload through searchable chunk creation. The detailed logging will confirm each step executes successfully.
+
+The system represents a significant advancement in personal knowledge management, combining modern AI techniques with robust document processing capabilities.

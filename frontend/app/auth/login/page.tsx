@@ -1,38 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { toast } from 'sonner'
+// Toast removed for simplicity
+import { authService } from '@/lib/auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        toast.error(error.message)
-      } else {
-        toast.success('Welcome back!')
-        router.push('/dashboard')
-        router.refresh()
-      }
+      await authService.login({ email, password })
+      router.push('/dashboard')
+      router.refresh()
     } catch (error) {
-      toast.error('An unexpected error occurred')
+      alert(error instanceof Error ? error.message : 'Login failed')
     } finally {
       setLoading(false)
     }

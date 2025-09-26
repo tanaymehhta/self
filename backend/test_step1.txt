@@ -1,0 +1,14 @@
+Step 1 Test: File Upload and Validation
+
+This is a simple test file to validate the first step of our pipeline.
+The system should:
+1. Accept the file upload
+2. Validate file size (under 1GB limit)
+3. Read the file content into memory
+4. Pass to next step for text extraction
+
+File stats:
+- Format: .txt (plain text)
+- Size: ~500 bytes
+- Content: UTF-8 text
+- Expected: Should pass validation easily

@@ -13,7 +13,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/migrations:/docker-entrypoint-initdb.d
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - self-network
 
@@ -67,93 +67,71 @@ services:
     networks:
       - self-network
 
-  # Backend API (Go)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
-    container_name: self-backend
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=self_dev
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - REDIS_URL=redis:6379
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin123
-      - NATS_URL=nats:4222
-      - QDRANT_URL=http://qdrant:6333
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-      - redis
-      - minio
-      - nats
-      - qdrant
-    volumes:
-      - ./backend:/app
-    networks:
-      - self-network
-    develop:
-      watch:
-        - action: rebuild
-          path: ./backend
-          ignore:
-            - ./backend/tmp/
+  # Backend API (Go) - Development setup without Docker for now
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile.dev
+  #   container_name: self-backend
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/self_dev
+  #     - REDIS_URL=redis:6379
+  #     - MINIO_ENDPOINT=minio:9000
+  #     - MINIO_ACCESS_KEY=minioadmin
+  #     - MINIO_SECRET_KEY=minioadmin123
+  #     - NATS_URL=nats:4222
+  #     - QDRANT_URL=http://qdrant:6333
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - minio
+  #     - nats
+  #     - qdrant
+  #   volumes:
+  #     - ./backend:/app
+  #   networks:
+  #     - self-network
 
-  # Frontend (Next.js)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: self-frontend
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
-      - NEXT_PUBLIC_WS_URL=ws://localhost:8080
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    networks:
-      - self-network
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /app
-          ignore:
-            - node_modules/
+  # Frontend (Next.js) - Development setup without Docker for now
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile.dev
+  #   container_name: self-frontend
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://localhost:8080
+  #     - NEXT_PUBLIC_WS_URL=ws://localhost:8080
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - self-network
 
-  # AI Services (Python)
-  ai-services:
-    build:
-      context: ./ai-services
-      dockerfile: Dockerfile.dev
-    container_name: self-ai
-    environment:
-      - NATS_URL=nats:4222
-      - QDRANT_URL=http://qdrant:6333
-    ports:
-      - "8000:8000"
-    depends_on:
-      - nats
-      - qdrant
-    volumes:
-      - ./ai-services:/app
-      - ./models:/app/models
-    networks:
-      - self-network
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./ai-services
-          target: /app
+  # AI Services (Python) - Will be added in Phase 1
+  # ai-services:
+  #   build:
+  #     context: ./ai-services
+  #     dockerfile: Dockerfile.dev
+  #   container_name: self-ai
+  #   environment:
+  #     - NATS_URL=nats:4222
+  #     - QDRANT_URL=http://qdrant:6333
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - nats
+  #     - qdrant
+  #   volumes:
+  #     - ./ai-services:/app
+  #     - ./models:/app/models
+  #   networks:
+  #     - self-network
 
 volumes:
   postgres_data:

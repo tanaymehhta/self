@@ -1,15 +1,36 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
 
-export default async function DashboardPage() {
-  const supabase = createClient()
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { authService, type User } from '@/lib/auth'
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function DashboardPage() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
-  if (!user) {
-    redirect('/auth/login')
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      router.push('/auth/login')
+      return
+    }
+
+    const currentUser = authService.getCurrentUser()
+    setUser(currentUser)
+    setLoading(false)
+  }, [router])
+
+  const handleSignOut = () => {
+    authService.logout()
+    router.push('/auth/login')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    )
   }
 
   return (
@@ -20,17 +41,21 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Self Dashboard</h1>
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => router.push('/chat')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Open Chat
+              </button>
               <span className="text-sm text-muted-foreground">
-                Welcome, {user.email}
+                Welcome, {user?.full_name || user?.email}
               </span>
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Sign out
-                </button>
-              </form>
+              <button
+                onClick={handleSignOut}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Sign out
+              </button>
             </div>
           </div>
         </div>
